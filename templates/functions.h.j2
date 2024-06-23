@@ -1,0 +1,10 @@
+#pragma once
+
+#include <optional>
+
+{%- for i in range(call_stack_size) %}
+
+std::optional<int> get_result_{{ i }}();
+
+int get_result_or_throw_{{ i }}();
+{%- endfor %}

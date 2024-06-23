@@ -1,0 +1,40 @@
+#include "functions.h"
+
+#include <stdexcept>
+#include <optional>
+
+{%- if index == (call_stack_size - 1) %}
+
+#include "random.hpp"
+
+extern float fail_probability;
+
+{%- endif %}
+
+std::optional<int> get_result_{{ index }}()
+{
+{%- if index == (call_stack_size - 1) %}
+    if (roll_probability() < fail_probability) {
+        return std::nullopt;
+    }
+    return 42;
+{%- else %}
+    auto result = get_result_{{ index + 1}}();
+    if (!result) {
+        return std::nullopt;
+    }
+    return *result + 1;
+{%- endif %}
+}
+
+int get_result_or_throw_{{ index }}()
+{
+{%- if index == (call_stack_size - 1) %}
+    if (roll_probability() < fail_probability) {
+        throw std::runtime_error("the die has been cast");
+    }
+    return 42;
+{%- else %}
+    return get_result_or_throw_{{ index + 1 }}() + 1;
+{%- endif %}
+}
